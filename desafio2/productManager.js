@@ -31,7 +31,7 @@ export class ProductManager {
       if (codeExists) {
         throw new Error("El codigo existe por favor verificar");
       } else {
-        ProductManager.correlativoId++;
+        //ProductManager.correlativoId++;
         const newProduct = {
           id: crypto.randomUUID(),
           title,
@@ -77,25 +77,54 @@ export class ProductManager {
     }
       
     }
+
+    async updateProduct(id, data) {
+      try {
+        let products = await utils.readFile(this.path);
+        this.products = products?.length > 0? products : [];
+        let productIndex = this.products.findIndex((dato) => dato.id === id);
+        if (productIndex !== -1){
+          this.products[productIndex] = {
+            ...this.products[productIndex],
+            ...data};
+            await utils.writeFile(this.path, products);
+              return {
+                mensaje:"producto actualizado", 
+                producto:this.products[productIndex]};
+          }else{
+            return {mensaje:"No existe el producto solicitado."};
+          }
+          } catch(error){
+          console.log(error);
+
+        }
+
+    }
+    async deleteProduct(id) {
+      try{
+        let products = await utils.readFile(this.path);
+        this.products = products?.length > 0? products : [];
+        let productIndex = this.products.findIndex((dato) => dato.id === id);
+        if (productIndex !== -1){
+          let product = this.products[productIndex];
+          this.products.splice(productIndex, 1);
+          await utils.writeFile(this.path, products);
+          return {mensaje:"producto eliminado", producto: product};
+      }
+      else{
+        return {mensaje:"No existe el producto solicitado."};
+      }
+    }
+    catch(error){
+          console.log(error);
+        }
+      }
+
   }
   
-  const item = {
-    title: "Producto prueba",
-    description: "Este es un producto de prueba",
-    price: 200,
-    thumbnail: 'Sin imagen',
-    code: 'abc123',
-    stock: 25
-};
-const product = new ProductManager();
-console.log(product.getProducts());
-product.addProduct(item);
-console.log(product.getProducts());
-product.addProduct(item);
-console.log(product.getProductById(1));
-console.log(product.getProductById(2));
-   
+  
+
 
 export default{
     ProductManager,
-}
+};
