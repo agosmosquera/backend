@@ -1,7 +1,8 @@
 class Contador {
     constructor(nombre){
         this.nombre =nombre;
-        this.valor = 0
+        this.valor = 0;
+        Contador.contadorGlobal++;
     }
 
     static contadorGlobal = 0;

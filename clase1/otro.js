@@ -1,13 +1,13 @@
 
       
-const myList =(data) => {
-    if(data.length === 0 ||data==undefined) {
+let myList =(data) => {
+    if(data?.length === 0 ||data==undefined) {
         console.log("LA lista esta vacia");
     }    else {
         data.forEach((elemento) => {
             console.log(elemento);
         });
-        console.log("La longitud de la lista es" + data.length);
+        console.log("La longitud de la lista es " + data.length);
     }
 };
 myList();
