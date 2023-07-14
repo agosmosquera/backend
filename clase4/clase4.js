@@ -1,4 +1,4 @@
-const fs = require("fs");
+import fs from 'fs';
 fs.writeFileSync("archivo.txt","Hola");
 
 if (fs.existsSync("archivo.txt")) {

@@ -19,7 +19,7 @@ class ProductManager {
       let codeExists = this.products.some((dato) => dato.code == code);
   
       if (codeExists) {
-        throw new Error("El codigo existe por favor verificar");
+        throw new Error("El codigoooooo existe por favor verificar");
       } else {
         ProductManager.correlativoId++;
         const newProduct = {
@@ -61,7 +61,7 @@ const product = new ProductManager();
 console.log(product.getProducts());
 product.addProduct(item);
 console.log(product.getProducts());
-product.addProduct(item);
+// product.addProduct(item);
 console.log(product.getProductById(1));
-console.log(product.getProductById(2));
+// console.log(product.getProductById(2));
    
