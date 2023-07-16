@@ -4,14 +4,14 @@ import {ProductManager} from "./productManager.js";
 
 let myFirstStore = new ProductManager("./productos.json");
 let mySecondStore = new ProductManager("./productos2.json");
-// myFirstStore.addProduct(
-//     "producto prueba",
-//     "este es un producto de prueba",
-//     200,
-//     "http://imagen.jgp",
-//     "abcde1234" + Math.floor(Math.random() * (100 - 1) + 1),
-//     25
-// );
+myFirstStore.addProduct(
+    "producto prueba",
+    "este es un producto de prueba",
+    200,
+    "http://imagen.jgp",
+    "abcde1234" + Math.floor(Math.random() * (100 - 1) + 1),
+    25
+);
 // mySecondStore.addProduct(
 //   "producto prueba 2",
 //   "este es un producto de prueba",
