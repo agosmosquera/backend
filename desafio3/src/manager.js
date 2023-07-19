@@ -1,9 +1,11 @@
 import {ProductManager} from "./productManager.js";
+import {__dirname} from "./utils.js"
 
 //const {ProductManager} = productManager;
 
-let myFirstStore = new ProductManager("./productos.json");
-let mySecondStore = new ProductManager("./productos2.json");
+let myFirstStore = new ProductManager("productos.json");
+myFirstStore.getProducts().then((data) => console.log(data))
+//let mySecondStore = new ProductManager("./productos2.json");
 myFirstStore.addProduct(
     "producto prueba",
     "este es un producto de prueba",
@@ -13,14 +15,6 @@ myFirstStore.addProduct(
     25
 );
 
-myFirstStore.addProduct(
-    "Pelota",
-    "De futbol",
-    9.99,
-    "http://imagen.jgp",
-    "123c",
-    23
-  );
 
   myFirstStore.getProducts().then((data) => console.log(data));
 

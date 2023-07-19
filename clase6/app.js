@@ -41,7 +41,7 @@ const usuarios = [
 ]
 
 app.get('/bienvenida', (req, res) => {
-    res.send('<h1 style="color:blue"> Hola alumno </h1>');
+    res.send('<h1 style="color:blue"> saca la basura</h1>');
 });
 
 app.get('/usuario', (req, res) => {
@@ -74,18 +74,15 @@ app.get("/usuarios/", (req, res) => {
         res.json(arregloTemporal);
     } else {
         let myArray = [];
-        myArray = usuarios.filte((usuario) => usuario.gender == gender)
-    }
-    if (gender){
-        
-       
-        myArray.length > 0 && myArray.forEach(dato => {
-            arregloTemporal.push(dato)
-        })
+        myArray = usuarios.filter((usuario) => usuario.gender == gender);
+    
+        myArray.length > 0 &&
+          myArray.forEach((dato) => {
+            arregloTemporal.push(dato);
+          });
         res.json(arregloTemporal);
-    }
-   
-})
+      }
+    });
 
 app.listen(8080, () => {
     console.log("el servidor escuchando en el uerto 8080")
