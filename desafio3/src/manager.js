@@ -6,15 +6,22 @@ import {__dirname} from "./utils.js"
 let myFirstStore = new ProductManager("productos.json");
 myFirstStore.getProducts().then((data) => console.log(data))
 //let mySecondStore = new ProductManager("./productos2.json");
-myFirstStore.addProduct(
+ /* myFirstStore.addProduct(
     "producto prueba",
     "este es un producto de prueba",
     200,
     "http://imagen.jgp",
     "abcde1234" + Math.floor(Math.random() * (100 - 1) + 1),
     25
+); */
+myFirstStore.addProduct(
+  "producto prueba 2",
+  "este es un producto de prueba 2",
+  300,
+  "http://imagen.jgp",
+  "12548518" + Math.floor(Math.random() * (100 - 1) + 1),
+  25
 );
-
 
   myFirstStore.getProducts().then((data) => console.log(data));
 
