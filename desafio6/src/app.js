@@ -1,28 +1,102 @@
-import express from 'express';
-import __dirname from './utils.js';
-import usersRouter from './routes/users.router.js';
-import coursesRouter from './routes/courses.router.js';
-import viewsRouter from './routes/views.router.js'
-import handlebars from 'express-handlebars';
-import mongoose from 'mongoose';
+import express from "express";
+import * as dotenv from "dotenv";
+import __dirname from "./utils.js";
+/* handlebars */
+import { engine } from "express-handlebars";
+import exphbs from "express-handlebars";
+/* importo rutas */
+import productRouter from "./routes/products.routes.js";
+import cartRouter from "./routes/carts.routes.js";
+import viewsRouter from "./routes/views.routes.js";
+import realTimeProductsRouter from "./routes/realTimeProducts.routes.js";
+import messagesRouter from "./routes/messages.routes.js";
+
+import { Server } from "socket.io"; //importo socket server
+
+import { addProduct, deleteProduct } from "./dao/dbManagers/productManager.js";
+import { addMessages, getMessages } from "./dao/dbManagers/messageManager.js";
+
+/* import { saveProduct } from './dao/fsManagers/services/productUtils.js';
+import { deleteProduct } from './dao/fsManagers/services/productUtils.js'; */
+/* importo mongoose */
+import mongoose from "mongoose";
+
+//instancio dotenv
+dotenv.config();
+
 const app = express();
-const PORT = 8080;
-const connection = mongoose.connect('mongodb+srv://agosmosquera23:1234@cluster0.mynfmyx.mongodb.net/segundaentrega')
-/**
- * Template engine
- */
-app.engine('handlebars',handlebars.engine());
-app.set('views',__dirname+'/views');
-app.set('view engine','handlebars');
 
-/**
- * Middlewares
- */
-app.use(express.static(__dirname+'/public'))
+const PORT = process.env.PORT || 8080;
+
+/* ver porque no me toma la variable de entorno. */
+const MONGO_URI =
+  process.env.MONGO_URI ||
+  "mongodb+srv://agosmosquera23:1234@cluster0.mynfmyx.mongodb.net/segundaentrega";
+
+/* conexion a la BBDD de MongoDB */
+let dbConnect = mongoose.connect(MONGO_URI);
+dbConnect.then(() => {
+  console.log("conexion a la base de datos exitosa");
+}),
+  (error) => {
+    console.log("Error en la conexion a la base de datos", error);
+  };
+
+/* middlewares */
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
-app.use('/',viewsRouter)
-app.use('/api/users',usersRouter);
-app.use('/api/courses',coursesRouter);
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
-const server = app.listen(PORT,()=>console.log(`Listening on PORT ${PORT}`));
+/* config para usar handlebars */
+
+// Configuración del motor de plantillas Handlebars
+const hbs = exphbs.create(); // Creamos el motor de plantillas
+
+// Registro del helper "prop" en el motor de plantillas para poder renderizar las propiedades de los objetos.
+hbs.handlebars.registerHelper("prop", function (obj, key) {
+  return obj[key];
+});
+
+app.engine("handlebars", hbs.engine);
+app.set("view engine", "handlebars");
+app.set("views", `${__dirname}/views`);
+
+/* Routes */
+app.use("/api/products", productRouter);
+app.use("/api/carts", cartRouter);
+app.use("/", viewsRouter);
+app.use("/realtimeproducts", realTimeProductsRouter);
+app.use("/messages", messagesRouter);
+
+//comenzamos a trabajar con sockets.
+const httpServer = app.listen(PORT, () => {
+  console.log(`Escuchando al puerto ${PORT}`);
+});
+
+const socketServer = new Server(httpServer);
+
+socketServer.on("connection", (socket) => {
+  console.log("Nuevo cliente se ha conectado");
+
+  //socket on escucha
+  socket.on("message", (data) => {
+    console.log(data);
+  });
+
+  //socket emit envia
+  socket.emit("render", "Me estoy comunicando desde el servidor");
+
+  socket.on("addProduct", (product) => {
+    addProduct(product); // fn que agrega el producto creado en el form a la BBDD
+  });
+
+  socket.on("delete-product", (productId) => {
+    const { id } = productId;
+    deleteProduct(id); // fn que deletea el producto de la BBDD
+  });
+
+  socket.on("user-message", (obj) => {
+    addMessages(obj);
+    socketServer.emit("new-message", obj) //enviar el mensaje a todos los usuarios conectados
+  });
+});

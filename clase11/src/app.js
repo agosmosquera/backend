@@ -7,7 +7,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = 8080;
 const httpServer = app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
