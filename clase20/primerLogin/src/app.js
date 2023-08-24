@@ -5,8 +5,11 @@ import session from "express-session";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import LoginRoute from "./routes/login.routes.js";
+import ForgotRoute from "./routes/forgot.routes.js";
 import SignupRoute from "./routes/signup.routes.js";
 import SessionRoute from "./routes/session.routes.js";
+import passport from "passport";
+import initializePassport from "./config/passport.config.js";
 
 import * as dotenv from "dotenv";
 
@@ -31,13 +34,17 @@ app.use(
         useNewUrlParser: true,
         useUnifiedTopology: true,
       },
-      ttl: 3000,
+      ttl: 30,
     }),
     secret: "codersecret",
     resave: false,
     saveUninitialized: false,
   })
 );
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 const environment = async () => {
   try {
@@ -55,6 +62,7 @@ app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
 app.use("/", LoginRoute);
 app.use("/signup", SignupRoute);
+app.use("/forgot", ForgotRoute);
 app.use("/api/session/", SessionRoute);
 
 const server = app.listen(PORT, () => {
