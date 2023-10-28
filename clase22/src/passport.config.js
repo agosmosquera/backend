@@ -5,7 +5,8 @@ import jwt from "jsonwebtoken";
 import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt"; 
 
 
-//const JWTStrategy = jwt.JWTStrategy;
+// const JWTStrategy = jwt.JWTStrategy;
+// const ExtractJwt = jwt.ExtractJwt;
 
 const cookieExtractor = (req) => {
     let token = null;

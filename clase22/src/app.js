@@ -23,7 +23,7 @@ app.post("/login", (req, res) => {
             data : "Faltan campos"
         })
     }
-    if (username === "coder@coder.com" || password === "1234"){
+    if (username === "coder@coder.com" & password === "1234"){
         const myToken  = generateToken({username, password});
         /* res.status(200).json({
             message : "success",
@@ -52,6 +52,10 @@ app.post("/login", (req, res) => {
 app.get("/current", passportCall("jwt"), authorization("admin"), (req, res) => {
     res.send(req.user)
 })
+
+// app.get("/current", passport.authenticate('jwt',{session:false}), (req,res)=> {
+//     res.send(req.user)
+// })
 
 app.listen(PORT, ( ) => {
     console.log("Server started " + PORT);

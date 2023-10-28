@@ -8,7 +8,9 @@ const handleLogin = async () => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({username, password}),
-        });
+        }). then (result=> result.json()).then(json=>{
+            localStorage.setItem('authToken', json.token)
+        })
         const result = await response.json();
         //result.message === "Success" ? localStorage.setItem("token", result.token) : alert("errorrrrrrrr");
     } catch (err) {

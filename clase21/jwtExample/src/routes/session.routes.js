@@ -1,3 +1,24 @@
+/*import { Router } from "express";
+import UserModel from "../models/user.model.js";
+import { createHash, isValidPassword } from "../utils.js";
+import passport from "passport";
+
+const router = Router();
+
+router.get('/github', passport.authenticate('github',{scope:['user:email']}),async(req,res)=>{})
+
+router.get('/githubcallback', passport.authenticate('github',{failureRedirect:'/login'}),async(req,res)=>{
+  req.session.user=req.user;
+  res.redirect('/')
+})
+
+
+
+
+
+export default router;
+
+*/
 import { Router } from "express";
 import UserModel from "../models/user.model.js";
 import { createHash, isValidPassword } from "../utils.js";
@@ -15,9 +36,14 @@ function auth(req, res, next) {
 
 router.post(
   "/login",
-  passport.authenticate("login", {successRedirect: "/privado",failureRedirect: "/failLogin"}), async (req, res) => {
+  passport.authenticate("login", {
+    failureRedirect: "/failLogin",
+  }),
+  async (req, res) => {
     console.log(req.user);
-    if (!req.user) return res.status(400).send({status: "error", error: "error de autenticacion"});
+    if (!req.user) {
+      return res.status(401).json("error de autenticacion");
+    }
     req.session.user = {
       first_name: req.user.first_name,
       last_name: req.user.last_name,
@@ -25,10 +51,10 @@ router.post(
       age: req.user.age,
     };
     req.session.admin = true;
+
     res.send({ status: "success", mesage: "user logged", user: req.user });
   }
-)
-;
+);
 
 /*{
     failureRedirect: "/api/session/failLogin",
@@ -49,7 +75,7 @@ router.post(
   }
 )*/
 
-router.get("/failLogin",  (req, res) => {
+router.get("/failLogin", async (req, res) => {
   console.log("failed strategy");
   res.send({ error: "failed" });
 });
@@ -125,7 +151,10 @@ router.post("/signup", async (req, res) => {
 });
 */
 router.get("/privado", auth, (req, res) => {
-  res.render("topsecret", {});
+  res.render("topsecret", {
+    nombre: req.session.user.first_name,
+    apellido: req.session.user.last_name,
+  });
 });
 
 router.post(
@@ -141,5 +170,21 @@ router.get("/failRegister", async (req, res) => {
   console.log("failed strategy");
   res.send({ error: "failed" });
 });
+
+router.get(
+  "/github",
+  passport.authenticate("github", { scope: ["user:email"] }),
+  async (req, res) => {}
+);
+
+router.get(
+  "/githubcallback",
+  passport.authenticate("github", { failureRedirect: "/login" }),
+  async (req, res) => {
+    req.session.user = req.user;
+    req.session.admin = true;
+    res.redirect("/");
+  }
+);
 
 export default router;
